@@ -21,23 +21,20 @@ const BARCODE_FORMATS = [
 // • High FPS so fast movement doesn't miss a frame
 // • Wide, short qrbox matches the elongated shape of barcodes
 // • aspectRatio > 1 gives a landscape camera view
+// • videoConstraints requests high-res rear camera with continuous autofocus
 const SCAN_CONFIG = {
   fps: 24,
   qrbox: { width: 320, height: 120 },  // wide rectangle — ideal for 1-D codes
   aspectRatio: 16 / 9,                 // landscape crops out irrelevant area
   formatsToSupport: BARCODE_FORMATS,
-  experimentalFeatures: {
-    useBarCodeDetectorIfSupported: true, // use native BarcodeDetector API when available (faster)
+  videoConstraints: {
+    facingMode: { ideal: 'environment' }, // rear camera
+    width:  { ideal: 1920 },
+    height: { ideal: 1080 },
   },
-};
-
-// Camera constraints: request the highest-resolution rear camera available.
-// More pixels → easier to resolve narrow barcode bars at a distance.
-const CAMERA_CONSTRAINTS = {
-  facingMode: { ideal: 'environment' },
-  width: { ideal: 1920 },
-  height: { ideal: 1080 },
-  focusMode: { ideal: 'continuous' },   // keep autofocus active
+  experimentalFeatures: {
+    useBarCodeDetectorIfSupported: true, // native BarcodeDetector API when available
+  },
 };
 
 // How long (ms) to ignore subsequent scans after one succeeds (prevents duplicates)
@@ -163,9 +160,11 @@ export default function ScannerModal({ onClose, onScan, continuous = false }) {
 
     const init = async () => {
       try {
-        await start(CAMERA_CONSTRAINTS);
+        // html5-qrcode expects { facingMode } as the camera selector.
+        // High-res & autofocus constraints live in SCAN_CONFIG.videoConstraints.
+        await start({ facingMode: 'environment' });
       } catch {
-        // Fallback: let the browser pick any camera
+        // Fallback: front camera (desktop / devices with only one camera)
         try {
           await start({ facingMode: 'user' });
         } catch (err) {
