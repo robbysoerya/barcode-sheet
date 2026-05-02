@@ -21,9 +21,10 @@ const SCAN_CONFIG = {
   aspectRatio: 16 / 9,                 // landscape crops out irrelevant area
   formatsToSupport: BARCODE_FORMATS,
   videoConstraints: {
-    facingMode: { ideal: 'environment' }, // rear camera
-    width:  { ideal: 1920 },
-    height: { ideal: 1080 },
+    facingMode: { ideal: 'environment' },
+    width: { ideal: 4096 },
+    height: { ideal: 2160 },
+    frameRate: { ideal: 30, min: 15 },
   },
   experimentalFeatures: {
     useBarCodeDetectorIfSupported: true, // native BarcodeDetector API when available
