@@ -5,6 +5,7 @@ import { X, Loader2 } from 'lucide-react';
 export default function ScannerModal({ onClose, onScan }) {
   const scannerRef = useRef(null);
   const [isStarting, setIsStarting] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     // Initialize scanner with Html5Qrcode instead of Html5QrcodeScanner 
@@ -16,11 +17,7 @@ export default function ScannerModal({ onClose, onScan }) {
       try {
         await html5QrCode.start(
           { 
-            // Force back camera
-            facingMode: "environment",
-            // High resolution request to prevent blur
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
+            facingMode: "environment"
           },
           { 
             fps: 15, 
@@ -67,6 +64,7 @@ export default function ScannerModal({ onClose, onScan }) {
           setIsStarting(false);
         } catch (fallbackErr) {
           console.error("Fallback scanner failed:", fallbackErr);
+          setErrorMsg(fallbackErr?.message || "Failed to access camera.");
           setIsStarting(false);
         }
       }
@@ -91,13 +89,18 @@ export default function ScannerModal({ onClose, onScan }) {
           </button>
         </div>
         <div className="scanner-container" style={{ minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {isStarting && (
+          {isStarting && !errorMsg && (
             <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', color: 'var(--text-secondary)' }}>
               <Loader2 className="animate-spin" size={32} style={{ animation: 'spin 1s linear infinite' }} />
               <span>Starting camera...</span>
             </div>
           )}
-          <div id="reader"></div>
+          {errorMsg && (
+            <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', color: 'var(--danger)', padding: '1rem', textAlign: 'center', zIndex: 10 }}>
+              <span>{errorMsg}</span>
+            </div>
+          )}
+          <div id="reader" style={{ width: '100%', height: '100%' }}></div>
         </div>
         <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
           Position the barcode within the frame. Only standard barcodes are supported.
