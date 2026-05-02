@@ -5,16 +5,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 // ─── Barcode-only format list (no QR / 2D codes) ─────────────────────────────
 const BARCODE_FORMATS = [
   Html5QrcodeSupportedFormats.CODE_128,   // most common retail / logistics
-  Html5QrcodeSupportedFormats.CODE_39,
-  Html5QrcodeSupportedFormats.CODE_93,
-  Html5QrcodeSupportedFormats.CODABAR,
   Html5QrcodeSupportedFormats.EAN_13,     // retail product barcodes
-  Html5QrcodeSupportedFormats.EAN_8,
-  Html5QrcodeSupportedFormats.ITF,        // cartons / shipping
+  Html5QrcodeSupportedFormats.EAN_8, 
   Html5QrcodeSupportedFormats.UPC_A,
-  Html5QrcodeSupportedFormats.UPC_E,
-  Html5QrcodeSupportedFormats.RSS_14,     // GS1 DataBar
-  Html5QrcodeSupportedFormats.RSS_EXPANDED,
 ];
 
 // ─── Scan config tuned for 1-D barcodes ──────────────────────────────────────
